@@ -2,30 +2,41 @@
 
 import os
 import shutil
+import sys
 
 picfile = ['jpg', 'jpeg', 'png']
-dstdir = os.getcwd()
+dstdir = unicode(os.getcwd(), 'gb2312')
 
 def find_pic(arg, dirname, files):
-	pic_count = 0
-	file_count = 0
-	filepath = os.path.join(dirname, files)
-	if os.path.isfile(filepath):
-		file_count += 1
-		filetype = os.path.splitext(files)[1][1:]
-		print filetype
-		if filetype in picfile:
-			pic_count += 1
-			shutil.copy(filepath, dstdir)
-	return pic_count, file_count
+    for filename in files:
+        #f = filename.decode('gb2312')
+        f = unicode(filename, 'gb2312')
+        print 'file name is:', f
+        if 1:
+            arg['file_count'] += 1
+            filetype = os.path.splitext(f)[1][1:]
+            print 'filetype is:', filetype
+            if filetype in picfile:
+                arg['pic_count'] += 1
+                try:
+                    #print os.path.join(dirname, filename), os.path.join(dstdir, filename)
+                    shutil.copy2(os.path.join(dirname, filename), os.path.join(dstdir, filename))
+                except:
+                    print 'Error ', sys.exc_info()[0]
+                    #pass
+                #print 'pics number: %d, files number is: %d' % (pic_count, file_count)
 
 
 
 def combine_pic():
-	pwd = os.getcwd()
-	print pwd
-	c1, c2 = os.path.walk(dstdir, find_pic, None)
-	print c1, c2
+    pwd = os.getcwd()
+    print pwd
+    print os.path.join(dstdir, 'test.txt')
+    raw_input()
+    count = {'pic_count': 0, 'file_count': 0}
+    os.path.walk(os.getcwd(), find_pic, count)
+    print "pics number: %d, files number is: %d" % (count['pic_count'], count['pic_count'])
 
-if "__init__" == "__main__":
-	combine_pic()
+if __name__ == '__main__':
+    print 'start'
+    combine_pic()
